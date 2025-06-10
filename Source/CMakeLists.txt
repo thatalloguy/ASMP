@@ -12,6 +12,7 @@ file(GLOB_RECURSE ASMP_SRC
 add_library(ASMP STATIC
         ${ASMP_SRC}
         ${IMGUI_SOURCE}
+        ${IMGUI_SOURCE_BACKEND}
         ${GLAD_SRC}
 )
 

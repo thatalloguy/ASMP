@@ -7,6 +7,10 @@
 #include <iostream>
 #include <SDL3/SDL.h>
 #include <glad/glad.h>
+#include <imgui.h>
+
+#include <backends/imgui_impl_sdl3.h>
+#include <backends/imgui_impl_opengl3.h>
 
 namespace Globals {
 
@@ -40,6 +44,14 @@ namespace Globals {
         SDL_GL_SetSwapInterval(1);
 
         gladLoadGLLoader((GLADloadproc) SDL_GL_GetProcAddress);
+
+        ImGui::CreateContext();
+        ImGui_ImplSDL3_InitForOpenGL(window, context);
+        ImGui_ImplOpenGL3_Init("#version 440");
+        ImGui::StyleColorsDark();
+
+
+
     }
 
     bool shouldClose() {
@@ -50,12 +62,41 @@ namespace Globals {
             if (event.type == SDL_EVENT_QUIT) {
                 running = false;
             }
+
+
+            ImGui_ImplSDL3_ProcessEvent(&event);
         }
 
+        glClear(GL_COLOR_BUFFER_BIT);
+
+
+        ImGui_ImplSDL3_NewFrame();
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui::NewFrame();
+
+
+        auto draw = ImGui::GetForegroundDrawList();
+
+        draw->AddText(ImGui::GetCursorPos(),  ImColor(255, 255, 255), "Hello World");
+
+        ImGui::Render();
+
+
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
         SDL_GL_SwapWindow(window);
+
+
+
     }
 
     void destroyProject() {
+
+        ImGui_ImplOpenGL3_Shutdown();
+        ImGui_ImplSDL3_Shutdown();
+
+        ImGui::DestroyContext();
+
         SDL_GL_DestroyContext(context);
         SDL_DestroyWindow(window);
         SDL_Quit();
